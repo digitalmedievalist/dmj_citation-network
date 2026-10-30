@@ -30,9 +30,13 @@ In an iframe (or with `?embed`) the page
 - posts its height to the host as `{type: "dmj-citation-network:height", height}`.
 
 URL options: `?notitle` hides the heading when the host page has its own, `?skin=plain` switches
-the OpenEdition theme off, `?skin=oe` shows it outside a frame, `?theme=dark` forces dark.
+the OpenEdition theme off (the page then looks as it does on its own), `?skin=oe` shows it outside a frame.
 
-No cookies, no tracking, no third-party requests: d3 7.9.0 is bundled (ISC licence, `d3-LICENSE`).
+On its own the page follows the design of [digitalmedievalist.org](https://digitalmedievalist.org/):
+Vollkorn and Source Sans, warm grey ground, white panels, slate teal.
+
+No cookies, no tracking, no third-party requests: d3 7.9.0 (ISC licence, `d3-LICENSE`) and the fonts
+Vollkorn and Source Sans 3 (SIL Open Font License, `fonts/OFL-*.txt`) are bundled.
 
 ## Updating
 

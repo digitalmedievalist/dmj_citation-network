@@ -9,73 +9,75 @@ body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
 <meta name="claude:viewport-fit-sides" content="cover">
 <meta name="description" content="Which works the articles of Digital Medievalist cite together, and where DMJ articles cite each other.">
 <base target="_blank">
+<link rel="stylesheet" href="fonts/fonts.css">
 <style>
 /* Layout: a working desk. The network fills the left, a reading column of lists and the selected record on the right.
-   No web fonts and no third-party requests: the page is meant to sit in an iframe on journals.openedition.org. */
+   Corporate design of digitalmedievalist.org (WordPress, theme Nucleare): Vollkorn for titles, Source Sans for text,
+   warm grey ground with white panels, slate teal for title and links, #7db4b5 buttons in spaced capitals, square corners.
+   One light theme, as on the website. Fonts are bundled with the page: no third-party requests. */
 :root {
-  --bg: #f7f7f4; --panel: #ffffff; --fg: #17191c; --muted: #5d6066; --faint: #e9e9e4; --rule: #d3d3cc;
-  --work: #9a9c96; --work-shared: #5f625c; --edge: rgba(40,44,52,.13); --internal: #d9531f; --focus: #17191c;
-  --display: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
-  --body: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --bg: #f1f0ed; --panel: #ffffff; --fg: #5e5e5e; --strong: #383838; --muted: #7a7a7a; --faint: #ecebe7; --rule: #dddddd;
+  --title: #3f6d6e; --link: #447677; --button: #7db4b5; --button-fg: #383838; --line: #3f6d6e;
+  --work: #c4c4c0; --work-shared: #8c8c88; --edge: rgba(56,56,56,.13); --internal: #b0562c; --focus: #383838;
+  --display: Vollkorn, Georgia, serif; --body: "Source Sans 3", "Source Sans Pro", "Helvetica Neue", Arial, sans-serif;
+  --mono: "Source Sans 3", "Source Sans Pro", "Helvetica Neue", Arial, sans-serif;
+  --shadow: 0 0 2px rgba(0,0,0,.05);
 }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
-  --bg: #161718; --panel: #1f2022; --fg: #eeede8; --muted: #a9aaa4; --faint: #2c2d2f; --rule: #3a3b3d;
-  --work: #6d6f6a; --work-shared: #a9aba5; --edge: rgba(220,222,214,.12); --internal: #f07a4c; --focus: #ffffff; color-scheme: dark } }
-:root[data-theme="dark"] {
-  --bg: #161718; --panel: #1f2022; --fg: #eeede8; --muted: #a9aaa4; --faint: #2c2d2f; --rule: #3a3b3d;
-  --work: #6d6f6a; --work-shared: #a9aba5; --edge: rgba(220,222,214,.12); --internal: #f07a4c; --focus: #ffffff; color-scheme: dark }
-body { background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 15px; line-height: 1.45 }
-.wrap { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 20px 32px; max-width: 1480px; margin: 0 auto; display: grid; gap: 16px }
-header h1 { font-family: var(--display); font-weight: 600; font-size: clamp(26px, 3.2vw, 38px); margin: 0; letter-spacing: -.01em; text-wrap: balance }
-header p { margin: 4px 0 0; color: var(--muted); max-width: 72ch }
-.stats { display: flex; flex-wrap: wrap; gap: 8px 22px; font-family: var(--mono); font-size: 13px; color: var(--muted) }
-.stats b { color: var(--fg); font-weight: 600; font-size: 15px; font-variant-numeric: tabular-nums }
-.grid { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 16px; align-items: start }
+body { background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 16px; line-height: 1.5 }
+.wrap { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 28px 40px; max-width: 1480px; margin: 0 auto; display: grid; gap: 20px }
+header { text-align: center; display: grid; gap: 6px; justify-items: center }
+header h1 { font-family: var(--display); font-weight: 400; font-size: clamp(32px, 4.4vw, 50px); line-height: 1.1; color: var(--title); margin: 0; letter-spacing: -2px; text-wrap: balance }
+header .eyebrow { font: 14px var(--display); text-transform: uppercase; letter-spacing: 1px; color: var(--fg) }
+header p { margin: 4px 0 0; color: var(--fg); max-width: 68ch }
+.stats { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 26px; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; color: var(--fg) }
+.stats b { font: 400 24px var(--display); letter-spacing: 0; color: var(--title); text-transform: none; font-variant-numeric: lining-nums tabular-nums; margin-right: 4px }
+.grid { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 20px; align-items: start }
 @media (max-width: 980px) { .grid { grid-template-columns: minmax(0, 1fr) } }
-.stage { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; overflow: hidden; display: grid; grid-template-rows: auto 1fr auto; min-width: 0 }
-.controls { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; padding: 10px 14px; border-bottom: 1px solid var(--faint); font-size: 14px }
+.stage { background: var(--panel); box-shadow: var(--shadow); overflow: hidden; display: grid; grid-template-rows: auto 1fr auto; min-width: 0 }
+.controls { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; padding: 12px 16px; border-bottom: 1px solid var(--faint); font-size: 15px }
 .controls label { display: inline-flex; gap: 6px; align-items: center; cursor: pointer }
-.controls input[type=search] { font: inherit; padding: 5px 9px; border: 1px solid var(--rule); border-radius: 4px; background: var(--bg); color: var(--fg); width: 220px; max-width: 100% }
+.controls input[type=search] { font: inherit; padding: 6px 10px; border: 1px solid var(--rule); border-radius: 0; background: #fff; color: var(--strong); width: 230px; max-width: 100% }
 button { font: inherit; color: var(--fg) }
-.controls button, .zoombtn button { font-size: 13px; padding: 4px 10px; border: 1px solid var(--rule); border-radius: 4px; background: var(--bg); cursor: pointer }
+.controls button, .zoombtn button { font-size: 13px; padding: 7px 14px; border: 0; border-radius: 0; background: var(--button); color: var(--button-fg); text-transform: uppercase; letter-spacing: 1px; cursor: pointer }
+.controls button:hover, .zoombtn button:hover { background: var(--title); color: #fff }
 :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px }
 #canvas-box { position: relative; height: min(74vh, 760px); min-height: 420px }
 canvas { display: block; width: 100%; height: 100%; cursor: grab; touch-action: none }
 .embed canvas { touch-action: pan-y }
 .zoombtn { position: absolute; right: 10px; top: 10px; display: flex; gap: 4px }
-.zoombtn button { width: 30px; padding: 3px 0; background: var(--panel) }
-.hint { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); background: var(--panel); border: 1px solid var(--rule); border-radius: 4px; padding: 8px 12px; font-size: 13px; pointer-events: none }
-.tip { position: absolute; pointer-events: none; background: var(--panel); color: var(--fg); border: 1px solid var(--rule); border-radius: 4px; padding: 7px 9px; font-size: 13px; max-width: 300px; box-shadow: 0 4px 14px rgba(0,0,0,.12) }
-.tip small { display: block; color: var(--muted); font-family: var(--mono); font-size: 11.5px; margin-top: 2px }
-.legend { display: flex; flex-wrap: wrap; gap: 8px 20px; align-items: center; padding: 9px 14px; border-top: 1px solid var(--faint); font-size: 12.5px; color: var(--muted) }
-.legend .ramp { display: inline-flex; align-items: center; gap: 6px; font-family: var(--mono) }
-.legend .ramp i { display: inline-block; width: 120px; height: 9px; border-radius: 2px }
+.zoombtn button { width: 32px; padding: 4px 0; font-size: 15px }
+.hint { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); background: var(--panel); box-shadow: 0 0 6px rgba(0,0,0,.12); padding: 8px 12px; font-size: 14px; pointer-events: none }
+.tip { position: absolute; pointer-events: none; background: var(--panel); color: var(--strong); box-shadow: 0 1px 8px rgba(0,0,0,.14); padding: 8px 10px; font: 15px/1.3 var(--display); max-width: 300px }
+.tip small { display: block; color: var(--fg); font: 12.5px/1.35 var(--body); margin-top: 3px }
+.legend { display: flex; flex-wrap: wrap; gap: 8px 20px; align-items: center; padding: 10px 16px; border-top: 1px solid var(--faint); font-size: 13px; color: var(--fg) }
+.legend .ramp { display: inline-flex; align-items: center; gap: 6px }
+.legend .ramp i { display: inline-block; width: 120px; height: 9px }
 .sw { display: inline-block; width: 10px; height: 10px; border-radius: 50%; vertical-align: -1px; margin-right: 5px }
 .ln { display: inline-block; width: 18px; height: 2px; vertical-align: 3px; margin-right: 5px }
-aside { display: grid; gap: 16px; min-width: 0 }
-section.card { background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 14px 16px; min-width: 0 }
-section.card h2 { font-family: var(--display); font-weight: 600; font-size: 18px; margin: 0 0 8px }
-section.card h2 + p.sub { margin: -6px 0 10px; color: var(--muted); font-size: 13px }
+aside { display: grid; gap: 20px; min-width: 0 }
+section.card { background: var(--panel); box-shadow: var(--shadow); padding: 18px 20px; min-width: 0 }
+section.card h2 { font: 400 14px var(--display); text-transform: uppercase; letter-spacing: 1px; color: var(--fg); margin: 0 0 10px; padding-bottom: 8px; border-bottom: 1px solid var(--faint) }
+section.card h2 + p.sub { margin: -4px 0 10px; color: var(--muted); font-size: 13.5px }
 ol.rank { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px }
-ol.rank li { display: grid; grid-template-columns: 26px minmax(0, 1fr); gap: 8px; padding: 4px 2px; border-radius: 3px; cursor: pointer; font-size: 13.5px }
+ol.rank li { display: grid; grid-template-columns: 26px minmax(0, 1fr); gap: 8px; padding: 4px 2px; cursor: pointer; font-size: 14.5px; color: var(--strong) }
 ol.rank li:hover, ol.rank li:focus-visible { background: var(--faint); outline: none }
-ol.rank .n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align: right; color: var(--fg) }
+ol.rank .n { font: 17px var(--display); font-variant-numeric: lining-nums tabular-nums; text-align: right; color: var(--title) }
 ol.rank .t { min-width: 0 }
-ol.rank .t span { color: var(--muted) }
-.bars { display: grid; grid-template-columns: minmax(0, 9em) minmax(0, 1fr) 24px; gap: 4px 8px; align-items: center; font-size: 13px }
-.bars .bar { display: block; height: 8px; border-radius: 0 4px 4px 0; background: var(--work-shared) }
-.bars .v { font-family: var(--mono); text-align: right; font-variant-numeric: tabular-nums }
+ol.rank .t span { color: var(--muted); font-size: 13px }
+.bars { display: grid; grid-template-columns: minmax(0, 9em) minmax(0, 1fr) 26px; gap: 5px 8px; align-items: center; font-size: 14px; color: var(--strong) }
+.bars .bar { display: block; height: 8px; background: var(--button) }
+.bars .v { font: 16px var(--display); text-align: right; font-variant-numeric: lining-nums tabular-nums; color: var(--title) }
 .bars .nm { overflow: hidden; text-overflow: ellipsis; white-space: nowrap }
-#detail .empty { color: var(--muted); font-size: 14px }
-#detail h3 { font-family: var(--display); font-weight: 600; font-size: 17px; margin: 0 0 4px; text-wrap: balance }
-#detail .meta { font-family: var(--mono); font-size: 12px; color: var(--muted); margin-bottom: 8px }
-#detail ul { margin: 6px 0 0; padding-left: 18px; font-size: 13.5px; display: grid; gap: 3px }
-#detail a, .linkish { color: var(--fg) }
-.linkish { background: none; border: 0; padding: 0; text-decoration: underline; cursor: pointer; text-align: left; font-size: inherit }
-#detail .lbl { text-transform: uppercase; letter-spacing: .06em; font-size: 11px; color: var(--muted); margin-top: 10px }
-footer { color: var(--muted); font-size: 12.5px; max-width: 90ch }
-footer a { color: var(--muted) }
+#detail .empty { color: var(--fg); font-size: 15px }
+#detail h3 { font: 400 22px/1.2 var(--display); letter-spacing: -.5px; color: var(--strong); margin: 0 0 6px; text-wrap: balance }
+#detail .meta { font-size: 13px; color: var(--muted); margin-bottom: 8px }
+#detail ul { margin: 6px 0 0; padding-left: 18px; font-size: 14.5px; display: grid; gap: 3px }
+#detail a, .linkish { color: var(--link) }
+.linkish { background: none; border: 0; padding: 0; text-decoration: none; cursor: pointer; text-align: left; font-size: inherit }
+#detail a:hover, .linkish:hover { text-decoration: underline }
+#detail .lbl { text-transform: uppercase; letter-spacing: 1px; font-size: 12px; color: var(--muted); margin-top: 12px }
+footer { color: var(--fg); font-size: 13.5px; max-width: 90ch; margin: 0 auto; text-align: center }
+footer a { color: var(--link) }
 .embed .wrap { padding-block: 12px 16px; gap: 12px }
 .embed header h1 { font-size: 24px }
 .embed #canvas-box { height: min(70vh, 620px) }
@@ -86,12 +88,17 @@ footer a { color: var(--muted) }
 :root.oe {
   --bg: #ffffff; --panel: #ffffff; --fg: #000000; --muted: #666666; --faint: #eeeeee; --rule: #dddddd;
   --work: #bdbdbd; --work-shared: #8a8a8a; --edge: rgba(0,0,0,.12); --internal: #a2403d; --focus: #111111;
-  --line: #104239; --link: #a2403d;
+  --line: #104239; --link: #a2403d; --title: #000000; --strong: #000000; --button: #a2403d; --button-fg: #ffffff; --shadow: none;
   --display: Georgia, serif; --body: Verdana, "DejaVu Sans", sans-serif; --mono: Verdana, "DejaVu Sans", sans-serif;
 }
 .oe body { font-size: 12px; line-height: 1.5 }
 .oe .wrap { padding-block: 0 12px; gap: 14px; border-top: 7px solid var(--line) }
-.oe header { padding-top: 10px }
+.oe header { padding-top: 10px; text-align: left; justify-items: start; gap: 0 }
+.oe header .eyebrow { display: none }
+.oe .stats { justify-content: flex-start; text-transform: none; letter-spacing: 0 }
+.oe footer { margin: 0; text-align: justify }
+.oe .tip { box-shadow: none; border: 1px solid #000 }
+.oe .hint { box-shadow: none; border: 1px solid #000 }
 .oe header h1 { font: bold 20px/1.2 var(--display); letter-spacing: 0 }
 .oe header p { font: 13px/1.5 var(--display); color: var(--muted); text-align: justify }
 .oe .stats { font-size: 11px; gap: 4px 16px }
@@ -139,6 +146,7 @@ footer a { color: var(--muted) }
   <p class="embed-note" id="embed-note" hidden><span>Embedded content from <span id="embed-host">digitalmedievalist.github.io</span>: no cookies, no tracking.</span><a id="embed-full" href="./">Open as a full page ↗</a></p>
   <header>
     <h1>Digital Medievalist · Citation Network</h1>
+    <span class="eyebrow">DM Journal · 2005–2026</span>
     <p>Which works the articles of the journal cite together, and where DMJ articles cite each other. Built from the bibliographies of all issues (2005–2026) as recorded in the journal's Zotero group.</p>
   </header>
   <div class="stats" id="stats"></div>
@@ -199,7 +207,7 @@ if (theme === "light" || theme === "dark") document.documentElement.dataset.them
 
 const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 const isDark = () => css("color-scheme") === "dark";
-const RAMP_L = ["#86b6ef", "#6da7ec", "#5598e7", "#3987e5", "#2a78d6", "#256abf", "#1c5cab", "#184f95", "#104281"];
+const RAMP_L = ["#7db4b5", "#68a2a3", "#558f90", "#447677", "#3f6d6e", "#33595a", "#28484a", "#1d3739", "#142a2c"];  // digitalmedievalist.org teal
 const RAMP_OE = ["#7fb3a5", "#66a191", "#4f8f7f", "#3b7d6d", "#2b6b5c", "#1f5b4d", "#165042", "#104239", "#0b3029"];  // the journal's #104239
 const RAMP_D = ["#184f95", "#1c5cab", "#256abf", "#2a78d6", "#3987e5", "#5598e7", "#6da7ec", "#86b6ef", "#9ec5f4"];  // older = nearer the dark surface
 let yearColor;
