@@ -125,12 +125,18 @@ footer a { color: var(--muted) }
 .oe #detail .lbl { font-size: 10px; color: var(--muted) }
 .oe footer { font: 11px/1.5 var(--body); border-top: 1px solid var(--faint); padding-top: 8px; text-align: justify }
 .oe.notitle header { display: none }
+.embed-note { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 2px 12px; font-size: 11px; color: var(--muted); padding-top: 6px }
+.embed-note a { color: var(--muted) }
+.oe .embed-note { font-family: var(--body) }
+.oe .embed-note a { color: var(--link); text-decoration: none }
+.oe .embed-note a:hover { color: #111 }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important } }
 </style>
 
 </head>
 <body>
 <div class="wrap">
+  <p class="embed-note" id="embed-note" hidden><span>Embedded content from <span id="embed-host">digitalmedievalist.github.io</span>: no cookies, no tracking.</span><a id="embed-full" href="./">Open as a full page ↗</a></p>
   <header>
     <h1>Digital Medievalist · Citation Network</h1>
     <p>Which works the articles of the journal cite together, and where DMJ articles cite each other. Built from the bibliographies of all issues (2005–2026) as recorded in the journal's Zotero group.</p>
@@ -182,6 +188,12 @@ if (EMBED) document.documentElement.classList.add("embed");
 const OE = params.get("skin") === "oe" || (EMBED && params.get("skin") !== "plain");
 if (OE) document.documentElement.classList.add("oe");
 if (params.has("notitle")) document.documentElement.classList.add("notitle");
+// Tell the reader that this part of the host page comes from elsewhere, and where.
+if (EMBED) {
+  $("#embed-note").hidden = false;
+  if (location.host) $("#embed-host").textContent = location.host;
+  $("#embed-full").href = location.pathname;
+}
 const theme = params.get("theme") || (EMBED ? "light" : "");
 if (theme === "light" || theme === "dark") document.documentElement.dataset.theme = theme;
 
