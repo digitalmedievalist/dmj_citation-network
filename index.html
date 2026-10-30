@@ -80,6 +80,51 @@ footer a { color: var(--muted) }
 .embed header h1 { font-size: 24px }
 .embed #canvas-box { height: min(70vh, 620px) }
 @media (min-width: 640px) and (max-width: 980px) { .embed aside { grid-template-columns: 1fr 1fr; align-items: start } .embed #detail { grid-column: 1 / -1 } }
+/* OpenEdition skin: what the journal's Lodel theme (serif + minimaliste + maquette.css) uses.
+   White ground, Georgia titles, Verdana for everything else, #104239 rules, #A2403D links and
+   buttons, grey uppercase rubrics with a rule beneath (as in the site's side bar), no rounded corners. */
+:root.oe {
+  --bg: #ffffff; --panel: #ffffff; --fg: #000000; --muted: #666666; --faint: #eeeeee; --rule: #dddddd;
+  --work: #bdbdbd; --work-shared: #8a8a8a; --edge: rgba(0,0,0,.12); --internal: #a2403d; --focus: #111111;
+  --line: #104239; --link: #a2403d;
+  --display: Georgia, serif; --body: Verdana, "DejaVu Sans", sans-serif; --mono: Verdana, "DejaVu Sans", sans-serif;
+}
+.oe body { font-size: 12px; line-height: 1.5 }
+.oe .wrap { padding-block: 0 12px; gap: 14px; border-top: 7px solid var(--line) }
+.oe header { padding-top: 10px }
+.oe header h1 { font: bold 20px/1.2 var(--display); letter-spacing: 0 }
+.oe header p { font: 13px/1.5 var(--display); color: var(--muted); text-align: justify }
+.oe .stats { font-size: 11px; gap: 4px 16px }
+.oe .stats b { font: bold 14px var(--display) }
+.oe .stage, .oe section.card { border: 0; border-radius: 0; background: none; padding: 0 }
+.oe .stage { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line) }
+.oe .controls { padding: 8px 0; font-size: 12px; gap: 8px 14px }
+.oe .controls input[type=search] { border: 1px solid #000; border-radius: 0; background: #fff; padding: 3px 6px; font-size: 12px }
+.oe .controls button, .oe .zoombtn button { border: 0; border-radius: 0; background: var(--link); color: #fff; font-size: 11px; padding: 4px 9px; text-transform: uppercase; letter-spacing: .04em }
+.oe .controls button:hover, .oe .zoombtn button:hover { background: #111 }
+.oe .zoombtn button { width: 26px; padding: 3px 0; font-size: 13px }
+.oe #canvas-box { border-top: 1px solid var(--faint) }
+.oe .legend { padding: 8px 0; font-size: 11px; border-top: 1px solid var(--faint) }
+.oe .legend .ramp { font-family: var(--body) }
+.oe .tip, .oe .hint { border-radius: 0; box-shadow: none; border-color: #000; font-size: 12px }
+.oe .tip { font-family: var(--display); font-size: 13px }
+.oe .tip small { font-family: var(--body); font-size: 11px }
+.oe section.card h2 { font: 12px/1 var(--body); text-transform: uppercase; color: var(--muted); padding: .454em 0; margin: 0 0 8px; border-bottom: 2px solid var(--line) }
+.oe section.card h2 + p.sub { margin: 0 0 8px; font-size: 11px }
+.oe ol.rank li { font: 13px/1.4 var(--display); border-radius: 0; padding: 3px 0 }
+.oe ol.rank .n { font: bold 13px var(--display) }
+.oe ol.rank .t span { font: 11px var(--body) }
+.oe .bars { font: 13px var(--display) }
+.oe .bars .bar { border-radius: 0; background: var(--line) }
+.oe .bars .v { font: bold 13px var(--display) }
+.oe #detail h3 { font: bold 16px/1.25 var(--display) }
+.oe #detail .meta { font: 11px var(--body) }
+.oe #detail ul { font: 13px/1.45 var(--display) }
+.oe #detail a, .oe .linkish, .oe footer a { color: var(--link); text-decoration: none }
+.oe #detail a:hover, .oe .linkish:hover, .oe footer a:hover { color: #111 }
+.oe #detail .lbl { font-size: 10px; color: var(--muted) }
+.oe footer { font: 11px/1.5 var(--body); border-top: 1px solid var(--faint); padding-top: 8px; text-align: justify }
+.oe.notitle header { display: none }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important } }
 </style>
 
@@ -132,16 +177,22 @@ try { framed = self !== top; } catch (e) { framed = true; }
 // scrolls the host page; zooming the network takes Ctrl/⌘ + wheel, two fingers or the buttons.
 const EMBED = params.has("embed") || framed;
 if (EMBED) document.documentElement.classList.add("embed");
+// On OpenEdition the page wears the journal's Lodel theme; ?skin=oe shows it outside an iframe,
+// ?skin=plain switches it off, and ?notitle hides the heading when the host page has its own.
+const OE = params.get("skin") === "oe" || (EMBED && params.get("skin") !== "plain");
+if (OE) document.documentElement.classList.add("oe");
+if (params.has("notitle")) document.documentElement.classList.add("notitle");
 const theme = params.get("theme") || (EMBED ? "light" : "");
 if (theme === "light" || theme === "dark") document.documentElement.dataset.theme = theme;
 
 const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 const isDark = () => css("color-scheme") === "dark";
 const RAMP_L = ["#86b6ef", "#6da7ec", "#5598e7", "#3987e5", "#2a78d6", "#256abf", "#1c5cab", "#184f95", "#104281"];
+const RAMP_OE = ["#7fb3a5", "#66a191", "#4f8f7f", "#3b7d6d", "#2b6b5c", "#1f5b4d", "#165042", "#104239", "#0b3029"];  // the journal's #104239
 const RAMP_D = ["#184f95", "#1c5cab", "#256abf", "#2a78d6", "#3987e5", "#5598e7", "#6da7ec", "#86b6ef", "#9ec5f4"];  // older = nearer the dark surface
 let yearColor;
 function setRamp() {
-  const r = isDark() ? RAMP_D : RAMP_L;
+  const r = OE ? RAMP_OE : isDark() ? RAMP_D : RAMP_L;
   yearColor = d3.scaleQuantize().domain([2005, 2027]).range(r);
   $("#ramp").style.background = `linear-gradient(90deg, ${r.join(",")})`;
 }
@@ -183,7 +234,17 @@ function build() {
     .force("charge", d3.forceManyBody().strength(d => d.kind === "article" ? -90 : d.n > 1 ? -30 : -4).distanceMax(320))
     .force("collide", d3.forceCollide(d => d.r + 1.2))
     .force("x", d3.forceX(0).strength(0.045)).force("y", d3.forceY(0).strength(0.06))
-    .alphaDecay(0.03).on("tick", draw);
+    .alphaDecay(0.03).on("tick", () => { draw(); if (!moved && sim.alpha() < 0.12 && !fitted) { fitted = true; fit(); } });
+  fitted = false;
+}
+let moved = false, fitted = false;
+function fit(duration = 600) {
+  if (!nodes.length || !W) return;
+  const xs = nodes.map(n => n.x), ys = nodes.map(n => n.y), pad = 24;
+  const [x0, x1, y0, y1] = [Math.min(...xs), Math.max(...xs), Math.min(...ys), Math.max(...ys)];
+  const k = Math.min(2, (W - 2 * pad) / Math.max(1, x1 - x0), (H - 2 * pad) / Math.max(1, y1 - y0));
+  const t = d3.zoomIdentity.translate(-(x0 + x1) / 2 * k, -(y0 + y1) / 2 * k).scale(k);
+  d3.select(cv).transition().duration(duration).call(zoom.transform, t);
 }
 function resize() {
   const r = box.getBoundingClientRect(), dpr = devicePixelRatio || 1;
@@ -248,10 +309,10 @@ const zoom = d3.zoom().scaleExtent([0.3, 8]).filter(e => {
   if (e.type === "wheel") { if (e.ctrlKey || e.metaKey) return true; showHint(`${/Mac/.test(navigator.platform) ? "⌘" : "Ctrl"} + scroll to zoom`); return false; }
   if (e.type === "touchstart") return e.touches.length > 1;
   return !e.button;
-}).on("zoom", e => { transform = e.transform; draw(); });
+}).on("zoom", e => { transform = e.transform; if (e.sourceEvent) moved = true; draw(); });
 d3.select(cv).call(zoom).on("dblclick.zoom", null);
-$("#zin").addEventListener("click", () => d3.select(cv).transition().duration(250).call(zoom.scaleBy, 1.5));
-$("#zout").addEventListener("click", () => d3.select(cv).transition().duration(250).call(zoom.scaleBy, 1 / 1.5));
+$("#zin").addEventListener("click", () => (moved = true) && d3.select(cv).transition().duration(250).call(zoom.scaleBy, 1.5));
+$("#zout").addEventListener("click", () => (moved = true) && d3.select(cv).transition().duration(250).call(zoom.scaleBy, 1 / 1.5));
 cv.addEventListener("pointermove", e => {
   const r = cv.getBoundingClientRect(), n = nodeAt(e.clientX - r.left, e.clientY - r.top);
   if (n !== hover) { hover = n; draw(); }
@@ -296,7 +357,7 @@ function select(n) {
 function focusOn(id) {
   if (!nodeById.has(id)) { $("#show-single").checked = true; $("#only-internal").checked = false; build(); }
   const n = nodeById.get(id); if (!n) return;
-  select(n);
+  select(n); moved = true;
   const k = Math.max(transform.k, 1.4);
   d3.select(cv).transition().duration(500).call(zoom.transform, d3.zoomIdentity.translate(-(n.x || 0) * k, -(n.y || 0) * k).scale(k));
 }
@@ -318,7 +379,7 @@ document.querySelectorAll("ol.rank li").forEach(li => {
 $("#show-single").addEventListener("change", build);
 $("#only-internal").addEventListener("change", build);
 $("#q").addEventListener("input", e => { query = e.target.value.trim().toLowerCase(); draw(); });
-$("#reset").addEventListener("click", () => { select(null); d3.select(cv).transition().duration(400).call(zoom.transform, d3.zoomIdentity.scale(0.85)); });
+$("#reset").addEventListener("click", () => { select(null); moved = false; fit(400); });
 matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => { setRamp(); draw(); });
 new MutationObserver(() => { setRamp(); draw(); }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
 new ResizeObserver(resize).observe(box);
