@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Digital Medievalist Bibliography</title>
+<style>
+  :root { --link: rgb(162, 64, 61); --text: #000; --muted: #666; --rule: #ccc; }
+  html, body { margin: 0; padding: 0; background: #fff; }
+  body { font: 12px/18px latin_ext, Verdana, sans-serif; color: var(--text); padding: 2px 2px 8px; }
+  a { color: var(--link); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  form { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin: 0 0 10px; }
+  input[type=search] { flex: 1 1 160px; min-width: 120px; font: inherit; padding: 3px 5px; border: 1px solid #999; }
+  select { font: inherit; padding: 2px 3px; border: 1px solid #999; background: #fff; max-width: 100%; }
+  button { font: inherit; padding: 3px 9px; border: 1px solid #999; background: #eee; cursor: pointer; }
+  button:hover { background: #e2e2e2; }
+  .status { color: var(--muted); margin: 0 0 8px; }
+  .csl-bib-body { padding-left: 1.5em; text-indent: -1.5em; }
+  .csl-entry { margin-bottom: 9px; text-align: left; }
+  .pager { display: flex; justify-content: space-between; gap: 8px; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--rule); }
+  .pager button[disabled] { opacity: .4; cursor: default; }
+  .foot { margin-top: 10px; color: var(--muted); }
+  .err { color: #a00; }
+</style>
+</head>
+<body>
+<form id="f" role="search">
+  <input id="q" type="search" placeholder="Search title, author, year …" aria-label="Search the bibliography">
+  <select id="scope" aria-label="Collection">
+    <option value="">Whole library</option>
+    <option value="3ZGJYEXJ">Import from IMB (2018)</option>
+  </select>
+  <select id="sort" aria-label="Sort order">
+    <option value="dateAdded:desc">Recently added</option>
+    <option value="date:desc">Year (newest first)</option>
+    <option value="creator:asc">Author A–Z</option>
+    <option value="title:asc">Title A–Z</option>
+  </select>
+  <button type="submit">Search</button>
+</form>
+<p class="status" id="status">Loading …</p>
+<div id="list"></div>
+<div class="pager" id="pager" hidden>
+  <button type="button" id="prev">‹ Previous</button>
+  <span id="page" class="status"></span>
+  <button type="button" id="next">Next ›</button>
+</div>
+<p class="foot">Data from the <a href="https://www.zotero.org/groups/2138266/digitalmedievalist" target="_blank" rel="noopener">Digital Medievalist Zotero group</a>, formatted in Chicago author-date style. Open the group on Zotero to join and contribute.</p>
+
+<script>
+(function () {
+  var GROUP = 2138266, LIMIT = 25;
+  var $ = function (id) { return document.getElementById(id); };
+  var state = { q: '', scope: '', sort: 'dateAdded:desc', start: 0, total: 0 };
+
+  function apiUrl() {
+    var base = 'https://api.zotero.org/groups/' + GROUP +
+      (state.scope ? '/collections/' + state.scope + '/items' : '/items/top');
+    var s = state.sort.split(':');
+    var p = new URLSearchParams({
+      format: 'json', include: 'bib', style: 'chicago-author-date', linkwrap: '1',
+      itemType: '-attachment || note', limit: LIMIT, start: state.start,
+      sort: s[0], direction: s[1]
+    });
+    if (state.q) p.set('q', state.q);
+    return base + '?' + p.toString();
+  }
+
+  function render(items) {
+    var html = '<div class="csl-bib-body">';
+    items.forEach(function (it) {
+      var bib = it.bib || '';
+      // drop Zotero's wrapper div and inline styles, keep the entry
+      var m = bib.match(/<div class="csl-entry"[^>]*>([\s\S]*?)<\/div>\s*<\/div>\s*$/);
+      var inner = m ? m[1] : bib.replace(/<[^>]+>/g, '');
+      html += '<div class="csl-entry">' + inner + '</div>';
+    });
+    html += '</div>';
+    $('list').innerHTML = items.length ? html : '';
+  }
+
+  function load() {
+    $('status').textContent = 'Loading …';
+    $('status').className = 'status';
+    fetch(apiUrl(), { headers: { 'Zotero-API-Version': '3' } })
+      .then(function (r) {
+        if (!r.ok) throw new Error('Zotero API error ' + r.status);
+        state.total = parseInt(r.headers.get('Total-Results') || '0', 10);
+        return r.json();
+      })
+      .then(function (items) {
+        render(items);
+        var n = state.total;
+        $('status').textContent = n === 0 ? 'No results.' :
+          n + (n === 1 ? ' entry' : ' entries') + (state.q ? ' for “' + state.q + '”' : '');
+        var pages = Math.max(1, Math.ceil(n / LIMIT));
+        var cur = Math.floor(state.start / LIMIT) + 1;
+        $('pager').hidden = pages <= 1;
+        $('page').textContent = 'Page ' + cur + ' of ' + pages;
+        $('prev').disabled = cur <= 1;
+        $('next').disabled = cur >= pages;
+        // make links open outside the iframe
+        Array.prototype.forEach.call($('list').querySelectorAll('a'), function (a) {
+          a.target = '_blank'; a.rel = 'noopener';
+        });
+        window.scrollTo(0, 0);
+      })
+      .catch(function (e) {
+        $('status').textContent = 'Could not load the bibliography (' + e.message + '). Please try again later.';
+        $('status').className = 'status err';
+        $('list').innerHTML = '';
+      });
+  }
+
+  $('f').addEventListener('submit', function (ev) {
+    ev.preventDefault();
+    state.q = $('q').value.trim();
+    state.scope = $('scope').value;
+    state.sort = $('sort').value;
+    state.start = 0;
+    load();
+  });
+  $('scope').addEventListener('change', function () { $('f').requestSubmit ? $('f').requestSubmit() : load(); });
+  $('sort').addEventListener('change', function () { $('f').requestSubmit ? $('f').requestSubmit() : load(); });
+  $('prev').addEventListener('click', function () { state.start = Math.max(0, state.start - LIMIT); load(); });
+  $('next').addEventListener('click', function () { state.start += LIMIT; load(); });
+
+  // volumes of the journal as scopes (Zotero does not search sub-collections recursively)
+  fetch('https://api.zotero.org/groups/' + GROUP + '/collections/39T5FS9E/collections?format=json&limit=100')
+    .then(function (r) { return r.json(); })
+    .then(function (cols) {
+      cols.sort(function (a, b) {
+        var na = parseFloat(a.data.name.replace(/^Volume\s+/, '').replace('-', '.'));
+        var nb = parseFloat(b.data.name.replace(/^Volume\s+/, '').replace('-', '.'));
+        return nb - na;
+      });
+      var sel = $('scope'), ref = sel.options[1];
+      cols.forEach(function (c) {
+        var o = document.createElement('option');
+        o.value = c.key; o.textContent = 'DM Journal – ' + c.data.name;
+        sel.insertBefore(o, ref);
+      });
+      if (state.scope) sel.value = state.scope;
+    })
+    .catch(function () {});
+
+  // allow ?q=…&scope=… in the iframe URL for preset views
+  var init = new URLSearchParams(location.search);
+  if (init.get('q')) { state.q = init.get('q'); $('q').value = state.q; }
+  if (init.get('scope')) { state.scope = init.get('scope'); $('scope').value = state.scope; }
+  if (init.get('sort')) { state.sort = init.get('sort'); $('sort').value = state.sort; }
+  load();
+})();
+</script>
+</body>
+</html>
